@@ -9,14 +9,6 @@ om barn, men styret er som regel foreldre uten datakompetanse. Den vanligste
 måten de blir hacket på er gjenbrukte passord som allerede er lekket. Lagvakt
 fanger akkurat det, og gjør det forståelig med et enkelt trafikklys.
 
-## Skjermbilder
-
-![Dashbord](bilder/dashbord.png)
-
-![Styret](bilder/styret.png)
-
-![Passord-sjekk](bilder/passord.png)
-
 ## Hva den gjør
 - **Overvåker styret automatisk.** Sjekker hvert styremedlems e-post mot kjente
   datalekkasjer, i bakgrunnen på en tidsplan — ikke bare når noen åpner appen.
