@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block tittel %}Klubber{% endblock %}
+{% block innhold %}
+  <div>
+    <h1>Klubber</h1>
+    <p class="under">Bytt mellom klubbene dine, endre navn, eller legg til en ny</p>
+  </div>
+
+  <section class="liste">
+    <h2>Dine klubber</h2>
+    {% for k in klubber %}
+    <div class="rad">
+      <form method="post" action="/klubb/navn/{{ k.id }}" style="display:flex; gap:10px; flex:1 1 300px; min-width:0">
+        <input name="navn" value="{{ k.navn }}" style="flex:1 1 auto; padding:10px 12px; border:1px solid #DDE2EA; border-radius:9px; font-size:14px">
+        <button type="submit" class="btn liten sekundar">Lagre navn</button>
+      </form>
+      {% if k.id == aktiv_klubb_id %}
+      <span class="badge GRONN" style="margin:0">AKTIV</span>
+      {% else %}
+      <a href="/klubb/velg/{{ k.id }}"><button type="button" class="btn liten primar">Bytt til</button></a>
+      {% endif %}
+      <form method="post" action="/klubb/slett/{{ k.id }}" onsubmit="return confirm('Slette {{ k.navn }} og alle medlemmene?')">
+        <button type="submit" class="btn liten fare">Slett</button>
+      </form>
+    </div>
+    {% endfor %}
+  </section>
+
+  <section class="liste">
+    <h2>Legg til ny klubb</h2>
+    <form method="post" action="/klubb/ny" style="display:flex; flex-wrap:wrap; gap:12px; padding:16px 22px">
+      <input name="navn" placeholder="Navn på klubben, f.eks. Bodø/Glimt G14" required style="flex:1 1 280px; padding:11px 13px; border:1px solid #DDE2EA; border-radius:9px; font-size:14px">
+      <button type="submit" class="btn liten primar">Opprett klubb</button>
+    </form>
+  </section>
+{% endblock %}

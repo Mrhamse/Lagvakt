@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block tittel %}Styret{% endblock %}
+{% block innhold %}
+  <div>
+    <h1>Styret</h1>
+    <p class="under">{{ medlemmer|length }} personer sjekkes mot kjente datalekkasjer</p>
+  </div>
+
+  <section class="liste">
+    <h2>Legg til styremedlem</h2>
+    <form method="post" action="/legg-til" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding:16px 22px">
+      <input name="navn" placeholder="Navn" required style="flex:1 1 160px; padding:11px 13px; border:1px solid #DDE2EA; border-radius:9px; font-size:14px; font-family:inherit">
+      <input name="rolle" placeholder="Rolle" style="flex:1 1 130px; padding:11px 13px; border:1px solid #DDE2EA; border-radius:9px; font-size:14px; font-family:inherit">
+      <input name="epost" type="email" placeholder="E-post" required style="flex:1 1 200px; padding:11px 13px; border:1px solid #DDE2EA; border-radius:9px; font-size:14px; font-family:inherit">
+      <label style="display:flex; align-items:center; gap:6px; font-size:14px; color:#434F64"><input type="checkbox" name="tofaktor"> Har to-faktor</label>
+      <button type="submit" class="btn liten primar">Legg til og sjekk</button>
+    </form>
+  </section>
+
+  <div class="tabellboks">
+    <div class="skroll">
+      <table>
+        <thead>
+          <tr><th>NAVN</th><th>ROLLE</th><th>LEKKASJE</th><th>TO-FAKTOR</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for m in medlemmer %}
+          <tr style="{{ 'background:#FDF6F6' if m.lekket else '' }}">
+            <td><div style="font-weight:600">{{ m.navn }}</div><div style="font-size:12.5px; color:#8A93A1">{{ m.epost }}</div></td>
+            <td style="color:#434F64">{{ m.rolle }}</td>
+            <td>
+              {% if m.lekket %}<span class="merke roed"><span class="pk roed"></span>{{ m.lekkasjer|length }} lekkasjer</span>
+              {% else %}<span class="merke groenn"><span class="pk groenn"></span>Ingen</span>{% endif %}
+            </td>
+            <td>
+              {% if m.tofaktor %}<span class="merke groenn"><span class="pk groenn"></span>På</span>
+              {% else %}<span class="merke gul"><span class="pk gul"></span>Mangler</span>{% endif %}
+            </td>
+            <td>
+              <form method="post" action="/slett/{{ m.id }}" onsubmit="return confirm('Fjerne {{ m.navn }}?')">
+                <button type="submit" class="btn liten sekundar">Fjern</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" style="color:#5C6777">Ingen medlemmer ennå. Legg til over.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="fot">Legg bare inn personer som har samtykket. Lagvakt sjekker kun om e-posten finnes i en lekkasje — aldri selve passordet.</p>
+{% endblock %}

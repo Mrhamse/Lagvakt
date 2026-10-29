@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block tittel %}Varsler{% endblock %}
+{% block innhold %}
+  <div>
+    <h1>Varsler</h1>
+    <p class="under">Vennlige meldinger klare til å sendes til de som bør gjøre noe</p>
+  </div>
+
+  {% for m in meldinger %}
+  <div class="boble">
+    <div class="hvem">Til {{ m.til }} · {{ m.type }}</div>
+    <p>{{ m.tekst }}</p>
+    <button type="button" class="btn liten primar">Send melding</button>
+  </div>
+  {% else %}
+  <div class="tom" style="background:#FFF; border:1px solid #E4E8EF; border-radius:16px">Ingen varsler å sende — alt er i grønt. 🟢</div>
+  {% endfor %}
+
+  <p class="fot">I en ferdig versjon sendes disse automatisk på SMS eller e-post. Her vises de som forhåndsvisning.</p>
+{% endblock %}

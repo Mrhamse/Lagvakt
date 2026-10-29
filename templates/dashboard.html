@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block tittel %}Dashbord{% endblock %}
+{% block innhold %}
+  <div>
+    <h1>Oversikt</h1>
+    <p class="under">
+      {% if siste_sjekk == 'aldri' %}Ikke sjekket automatisk ennå{% else %}Sist sjekket {{ siste_sjekk }}{% endif %}
+      — <a href="/oppdater">kjør ny sjekk nå</a>
+    </p>
+    <div style="margin-top:12px; display:inline-flex; align-items:center; gap:8px; background:#DDF1E7; color:#1C8C57; padding:7px 13px; border-radius:999px; font-size:13px; font-weight:600">
+      <span style="width:8px; height:8px; border-radius:50%; background:#1C8C57"></span>
+      Automatisk overvåking på — sjekker hver 30. minutt
+    </div>
+  </div>
+
+  <section class="banner">
+    <div class="lys">
+      <span class="dot r {{ 'on' if status.farge == 'ROD' else '' }}"></span>
+      <span class="dot g {{ 'on' if status.farge == 'GUL' else '' }}"></span>
+      <span class="dot gr {{ 'on' if status.farge == 'GRONN' else '' }}"></span>
+    </div>
+    <div style="flex:1 1 320px; min-width:0">
+      <div class="badge {{ status.farge }}">{{ status.ord }}</div>
+      <h2 style="margin:0 0 6px; font-size:20px; font-weight:700">{{ status.tittel }}</h2>
+      <p style="margin:0; font-size:14.5px; line-height:1.5; color:#434F64">{{ status.tekst }}</p>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="kort"><div class="etikett">Styremedlemmer</div><div class="tall">{{ antall }}</div><div class="note" style="color:#1C8C57">Alle sjekket</div></div>
+    <div class="kort"><div class="etikett">Lekkasjer funnet</div><div class="tall" style="{{ 'color:#CF4040' if antall_lekket else '' }}">{{ antall_lekket }}</div><div class="note" style="{{ 'color:#CF4040' if antall_lekket else 'color:#1C8C57' }}">{{ 'Krever handling' if antall_lekket else 'Ingen' }}</div></div>
+    <div class="kort"><div class="etikett">To-faktor på</div><div class="tall">{{ tofaktor_pa }}<span style="font-size:17px; color:#5C6777; font-weight:500">/{{ tofaktor_total }}</span></div><div class="note" style="{{ 'color:#C9820A' if tofaktor_mangler else 'color:#1C8C57' }}">{{ (tofaktor_mangler ~ ' mangler') if tofaktor_mangler else 'Alle har det' }}</div></div>
+    <div class="kort"><div class="etikett">Overvåking</div><div class="tall" style="color:#1C8C57">På</div><div class="note">Hver 30. minutt</div></div>
+  </section>
+
+  <section class="liste">
+    <h2>Ting å fikse</h2>
+    {% for o in oppgaver %}
+    <div class="rad">
+      <span class="prikk {{ o.farge }}"></span>
+      <div class="tekst"><div class="rtittel">{{ o.tittel }}</div><div class="rdetalj">{{ o.tekst }}</div></div>
+      <a href="/varsler"><button type="button" class="btn liten {{ 'primar' if o.primar else 'sekundar' }}">{{ o.knapp }}</button></a>
+    </div>
+    {% else %}
+    <div class="tom">Ingenting å fikse akkurat nå. Alt ser trygt ut. 🟢</div>
+    {% endfor %}
+  </section>
+
+  <section class="liste">
+    <h2>Siste aktivitet</h2>
+    {% for a in aktivitet %}
+    <div class="rad">
+      <span class="prikk {{ 'ROD' if a.nye_funn else 'GRONN' }}"></span>
+      <div class="tekst">
+        <div class="rtittel">Automatisk sjekk — {{ a.antall_sjekket }} medlemmer sjekket</div>
+        <div class="rdetalj">{{ a.tidspunkt }}{% if a.nye_funn %} · {{ a.nye_funn }} nye funn: {{ a.detaljer }}{% else %} · ingen endringer{% endif %}</div>
+      </div>
+    </div>
+    {% else %}
+    <div class="tom">Ingen sjekker kjørt ennå. Klikk «kjør ny sjekk nå» over for å starte.</div>
+    {% endfor %}
+  </section>
+
+  <p class="fot">Lagvakt sjekker automatisk e-post mot kjente datalekkasjer, med samtykke fra hvert styremedlem. Vi ser aldri passordene deres. Lekkasjedata bl.a. fra Have I Been Pwned.</p>
+{% endblock %}

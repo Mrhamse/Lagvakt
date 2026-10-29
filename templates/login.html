@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lagvakt — Logg inn</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #F5F7FA; color: #16233B; display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 20px; }
+  .kort { background: #FFF; border: 1px solid #E4E8EF; border-radius: 16px; padding: 34px 30px; width: 100%; max-width: 380px; }
+  .merke { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  h1 { margin: 0 0 20px; font-size: 22px; }
+  label { display: block; font-size: 13.5px; font-weight: 600; color: #434F64; margin-bottom: 6px; }
+  input { width: 100%; padding: 12px 13px; border: 1px solid #DDE2EA; border-radius: 9px; font-size: 14px; font-family: inherit; margin-bottom: 16px; }
+  button { width: 100%; background: #2B5FA8; color: #FFF; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  .feil { background: #FBE9E9; color: #B53333; border-radius: 9px; padding: 11px 13px; font-size: 13.5px; margin-bottom: 16px; }
+  .lenke { margin: 18px 0 0; font-size: 13.5px; color: #5C6777; text-align: center; }
+  a { color: #2B5FA8; }
+</style>
+</head>
+<body>
+  <div class="kort">
+    <div class="merke">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 4.5 5.5v5.3c0 4.6 3.1 8.1 7.5 9.7 4.4-1.6 7.5-5.1 7.5-9.7V5.5L12 2.5Z" stroke="#2B5FA8" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.8 12.1l2.1 2.1 4.3-4.3" stroke="#2B5FA8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Lagvakt
+    </div>
+    <h1>Logg inn</h1>
+    {% if feil %}<div class="feil">{{ feil }}</div>{% endif %}
+    <form method="post">
+      <label for="epost">E-post</label>
+      <input id="epost" name="epost" type="email" required>
+      <label for="passord">Passord</label>
+      <input id="passord" name="passord" type="password" required>
+      <button type="submit">Logg inn</button>
+    </form>
+    <p class="lenke">Ny her? <a href="/registrer">Opprett konto</a></p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block tittel %}Passord-sjekk{% endblock %}
+{% block innhold %}
+  <div>
+    <h1>Passord-sjekk</h1>
+    <p class="under">Sjekk om et passord har havnet i en lekkasje — uten at passordet forlater maskinen</p>
+  </div>
+
+  <section class="liste">
+    <h2>Test et passord</h2>
+    <form method="post" action="/passord" style="display:flex; flex-wrap:wrap; gap:12px; padding:16px 22px">
+      <input name="passord" type="password" placeholder="Skriv inn passordet" required autocomplete="off"
+             style="flex:1 1 260px; padding:12px 13px; border:1px solid #DDE2EA; border-radius:9px; font-size:14px; font-family:inherit">
+      <button type="submit" class="btn liten primar">Sjekk passordet</button>
+    </form>
+  </section>
+
+  {% if resultat is not none %}
+    {% if resultat.lekket %}
+    <section class="banner">
+      <div class="lys"><span class="dot r on"></span></div>
+      <div style="flex:1 1 320px; min-width:0">
+        <div class="badge GUL" style="color:#CF4040; background:#FBE3E3">LEKKET</div>
+        <h2 style="margin:0 0 6px; font-size:20px; font-weight:700">Dette passordet er på avveie</h2>
+        <p style="margin:0; font-size:14.5px; line-height:1.5; color:#434F64">Funnet {{ "{:,}".format(resultat.antall).replace(",", " ") }} ganger i kjente lekkasjer. Ikke bruk det — velg et nytt, unikt passord.</p>
+      </div>
+    </section>
+    {% else %}
+    <section class="banner">
+      <div class="lys"><span class="dot gr on"></span></div>
+      <div style="flex:1 1 320px; min-width:0">
+        <div class="badge GRONN">TRYGT</div>
+        <h2 style="margin:0 0 6px; font-size:20px; font-weight:700">Ikke funnet i noen lekkasje</h2>
+        <p style="margin:0; font-size:14.5px; line-height:1.5; color:#434F64">Dette passordet dukker ikke opp i kjente lekkasjer. Husk likevel å bruke et unikt passord per tjeneste.</p>
+      </div>
+    </section>
+    {% endif %}
+  {% endif %}
+
+  <p class="fot">Passordet hashes lokalt, og bare de fem første tegnene av hashen sendes (k-anonymitet). Verken Lagvakt eller tjenesten ser hele passordet. Data fra Have I Been Pwned.</p>
+{% endblock %}

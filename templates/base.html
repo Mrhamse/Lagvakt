@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lagvakt — {% block tittel %}{% endblock %}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #F5F7FA; color: #16233B; }
+  a { text-decoration: none; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; padding: 0 28px; background: #FFF; border-bottom: 1px solid #E4E8EF; }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; letter-spacing: -0.2px; }
+  .klubbmeny { position: relative; }
+  .klubbmeny summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 7px 12px; background: #F1F4F9; border: 1px solid #E4E8EF; border-radius: 9px; font-size: 14px; font-weight: 600; }
+  .klubbmeny summary::-webkit-details-marker { display: none; }
+  .klubbliste { position: absolute; right: 0; top: 44px; background: #FFF; border: 1px solid #E4E8EF; border-radius: 10px; box-shadow: 0 10px 28px rgba(20,35,60,.12); min-width: 230px; padding: 6px; z-index: 10; }
+  .klubbliste a { display: block; padding: 9px 12px; border-radius: 7px; font-size: 14px; color: #16233B; }
+  .klubbliste a:hover { background: #F1F4F9; }
+  .klubbliste a.aktiv { color: #2B5FA8; font-weight: 600; }
+  .klubbliste .skille { border-top: 1px solid #EEF1F6; margin: 6px 0; }
+  .avatar { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #2B5FA8; color: #FFF; font-size: 14px; font-weight: 600; }
+  .wrap { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 28px; padding: 28px; }
+  nav { flex: 1 1 200px; max-width: 230px; display: flex; flex-direction: column; gap: 4px; }
+  nav a { display: block; padding: 11px 14px; border-radius: 9px; color: #434F64; font-size: 14.5px; font-weight: 500; }
+  nav a.aktiv { background: #E9F0F9; color: #2B5FA8; font-weight: 600; }
+  main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+  h1 { margin: 0 0 4px; font-size: 26px; font-weight: 700; letter-spacing: -0.4px; }
+  .under { margin: 0; font-size: 14px; color: #5C6777; }
+  .banner { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; background: #FFF; border: 1px solid #E4E8EF; border-radius: 16px; padding: 26px 28px; }
+  .lys { display: flex; flex-direction: column; gap: 9px; align-items: center; }
+  .dot { width: 15px; height: 15px; border-radius: 50%; background: #E2E5EB; }
+  .dot.r.on { background: #CF4040; box-shadow: 0 0 0 5px #FBE3E3; }
+  .dot.g.on { background: #C9820A; box-shadow: 0 0 0 5px #FBEED1; }
+  .dot.gr.on { background: #1C8C57; box-shadow: 0 0 0 5px #DDF1E7; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; padding: 4px 10px; border-radius: 999px; margin-bottom: 10px; }
+  .badge.GUL { color: #C9820A; background: #FBEED1; }
+  .badge.GRONN { color: #1C8C57; background: #DDF1E7; }
+  .btn { border: none; border-radius: 10px; padding: 13px 20px; font-size: 14.5px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  .btn.primar { background: #2B5FA8; color: #FFF; }
+  .btn.sekundar { background: #FFF; color: #2B5FA8; border: 1px solid #C9D4E6; }
+  .btn.fare { background: #FFF; color: #CF4040; border: 1px solid #EBC3C3; }
+  .btn.liten { padding: 10px 16px; font-size: 13.5px; }
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; }
+  .kort { background: #FFF; border: 1px solid #E4E8EF; border-radius: 14px; padding: 18px; }
+  .kort .etikett { font-size: 13px; color: #5C6777; margin-bottom: 8px; }
+  .kort .tall { font-size: 28px; font-weight: 700; }
+  .kort .note { font-size: 12.5px; margin-top: 4px; color: #5C6777; }
+  .liste { background: #FFF; border: 1px solid #E4E8EF; border-radius: 16px; }
+  .liste h2 { margin: 0; padding: 16px 22px 14px; font-size: 16px; font-weight: 700; border-bottom: 1px solid #EEF1F6; }
+  .rad { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 16px 22px; border-bottom: 1px solid #F1F4F8; }
+  .rad:last-child { border-bottom: none; }
+  .prikk { flex: 0 0 auto; width: 11px; height: 11px; border-radius: 50%; }
+  .prikk.ROD { background: #CF4040; } .prikk.GUL { background: #C9820A; } .prikk.GRONN { background: #1C8C57; }
+  .rad .tekst { flex: 1 1 300px; min-width: 0; }
+  .rad .rtittel { font-size: 14.5px; font-weight: 600; }
+  .rad .rdetalj { font-size: 13px; color: #5C6777; margin-top: 2px; }
+  .fot { margin: 2px 0 0; font-size: 12.5px; color: #8A93A1; }
+  .tom { padding: 22px; color: #5C6777; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .tabellboks { background: #FFF; border: 1px solid #E4E8EF; border-radius: 16px; overflow: hidden; }
+  .skroll { overflow-x: auto; }
+  thead tr { text-align: left; color: #5C6777; background: #FAFBFD; }
+  th { padding: 13px 20px; font-weight: 600; font-size: 12.5px; letter-spacing: 0.3px; }
+  td { padding: 15px 20px; border-top: 1px solid #F0F3F7; }
+  .merke { display: inline-flex; align-items: center; gap: 7px; }
+  .merke .pk { width: 9px; height: 9px; border-radius: 50%; }
+  .groenn { color: #1C8C57; } .roed { color: #CF4040; font-weight: 600; } .gul { color: #C9820A; font-weight: 600; }
+  .pk.groenn { background: #1C8C57; } .pk.roed { background: #CF4040; } .pk.gul { background: #C9820A; }
+  .boble { align-self: flex-start; max-width: 460px; background: #FFF; border: 1px solid #E7EBF1; border-radius: 16px; padding: 18px 20px; }
+  .boble .hvem { font-size: 13px; color: #8A93A1; margin-bottom: 8px; }
+  .boble p { margin: 0 0 12px; font-size: 15px; line-height: 1.55; color: #1E2A3F; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2.5 4.5 5.5v5.3c0 4.6 3.1 8.1 7.5 9.7 4.4-1.6 7.5-5.1 7.5-9.7V5.5L12 2.5Z" stroke="#2B5FA8" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M8.8 12.1l2.1 2.1 4.3-4.3" stroke="#2B5FA8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Lagvakt
+  </div>
+  <div style="display:flex; align-items:center; gap:14px">
+    <details class="klubbmeny">
+      <summary>{{ klubb }}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="#5C6777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="klubbliste">
+        {% for k in alle_klubber %}
+        <a href="/klubb/velg/{{ k.id }}" class="{{ 'aktiv' if k.id == aktiv_klubb_id }}">{{ k.navn }}</a>
+        {% endfor %}
+        <div class="skille"></div>
+        <a href="/klubber">Administrer klubber…</a>
+      </div>
+    </details>
+    <details class="klubbmeny">
+      <summary style="border:none; background:none; padding:0">
+        <div class="avatar">{{ (bruker.navn or bruker.epost or 'U')[0]|upper }}</div>
+      </summary>
+      <div class="klubbliste">
+        <div style="padding:9px 12px; font-size:13px; color:#8A93A1">{{ bruker.epost }}</div>
+        <div class="skille"></div>
+        <a href="/logg-ut">Logg ut</a>
+      </div>
+    </details>
+  </div>
+</header>
+<div class="wrap">
+  <nav aria-label="Hovedmeny">
+    <a href="/" class="{{ 'aktiv' if side=='oversikt' }}">Oversikt</a>
+    <a href="/styret" class="{{ 'aktiv' if side=='styret' }}">Styret</a>
+    <a href="/passord" class="{{ 'aktiv' if side=='passord' }}">Passord-sjekk</a>
+    <a href="/varsler" class="{{ 'aktiv' if side=='varsler' }}">Varsler</a>
+    <a href="/klubber" class="{{ 'aktiv' if side=='innstillinger' }}">Klubber</a>
+  </nav>
+  <main>
+    {% block innhold %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>
