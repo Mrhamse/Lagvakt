@@ -1,43 +1,58 @@
 # Lagvakt
 
-En enkel sikkerhetstjeneste for frivillige lag og foreninger. Lagvakt passer på
-at folkene i et klubbstyre ikke har e-post eller passord på avveie, og varsler
-dem på en vennlig måte hvis de har det.
+Lagvakt er en liten sikkerhetstjeneste for frivillige lag og foreninger. Den
+passer på at folkene i et klubbstyre ikke har e-post eller passord på avveie,
+og varsler dem på en vennlig måte hvis de har det.
 
-Idrettslag, korps og velforeninger sitter på medlemslister med adresser og info
-om barn, men styret er som regel foreldre uten datakompetanse. Den vanligste
-måten de blir hacket på er gjenbrukte passord som allerede er lekket. Lagvakt
-fanger akkurat det, og gjør det forståelig med et enkelt trafikklys.
+Idrettslag, korps og velforeninger sitter på medlemslister med adresser og
+informasjon om barn, men styret er som regel foreldre uten datakompetanse. Den
+vanligste måten slike lag blir hacket på, er gjenbrukte passord som allerede er
+lekket. Lagvakt fanger akkurat det, og gjør det forståelig med et enkelt
+trafikklys.
 
-## Hva den gjør
-- **Overvåker styret automatisk.** Sjekker hvert styremedlems e-post mot kjente
-  datalekkasjer, i bakgrunnen på en tidsplan — ikke bare når noen åpner appen.
-- **Sjekker passord trygt.** Et styremedlem kan teste om et passord er lekket,
-  uten at passordet forlater maskinen (k-anonymitet).
-- **Viser et trafikklys.** Grønn, gul eller rød status som alle forstår.
-- **Lager vennlige varsler.** «Hei Ola, bytt passord…», klart til å sendes.
-- **Flere klubber per bruker.** Én person kan styre mange lag, hver adskilt.
+## Oversikt
 
-## Hvordan det fungerer
-- **Flerkildes lekkasjemotor.** Hver datakilde (XposedOrNot, LeakCheck, Have I
-  Been Pwned) er en egen adapter. En aggregator spør alle samtidig og slår
-  sammen svarene, så én kilde fanger det en annen går glipp av.
-- **Automatisk overvåking.** En bakgrunns-planlegger kjører sjekkene jevnlig og
-  logger nye funn, så appen jobber mens du sover.
-- **Passord-sjekk med k-anonymitet.** Passordet hashes lokalt, og bare de fem
-  første tegnene av hashen sendes.
-- **Innlogging og data per bruker.** Hver bruker ser kun sine egne klubber.
+Når en i styret logger inn, møtes de av et dashbord som viser klubbens sikkerhet
+som ett trafikklys. Tanken er at en travel forelder skal skjønne statusen på to
+sekunder, uten teknisk sjargong. Under ligger en liste over konkrete ting som
+bør fikses, og en logg over de automatiske sjekkene.
 
-## Sikkerhet og personvern
-Bygget for en sensitiv kontekst (lag med barn), så personvern er en del av
-designet:
-- Passord lagres hashet, aldri i klartekst.
-- Lekkasjesjekken ser kun *om* en e-post er lekket, aldri selve passordet.
-- Passord-sjekken sender aldri passordet (k-anonymitet).
-- Hver bruker ser kun sine egne data.
-- Kun seriøse kilder brukes, aldri tjenester som dumper passord i klartekst.
+![Dashbord](bilder/dashbord.png)
 
-## Prosjektstruktur
+Lagvakt kjører sjekkene i bakgrunnen på en fast tidsplan, ikke bare når noen
+åpner appen. På den måten oppdager den nye lekkasjer av seg selv og logger dem,
+så styret kan stole på at noen følger med — også når de ikke gjør det selv.
+
+## Styret
+
+Hvert styremedlem legges inn med navn og e-post, og sjekkes mot flere kjente
+lekkasjedatabaser. Lagvakt ser kun *om* en e-post er funnet i en lekkasje, aldri
+selve passordet. Dukker noen opp rødt, kan styret sende en vennlig påminnelse
+med ett klikk.
+
+![Styret](bilder/styret.png)
+
+Bak kulissene spør Lagvakt tre kilder samtidig (XposedOrNot, LeakCheck og Have I
+Been Pwned) og slår sammen svarene. Hver kilde er skrevet som en egen liten
+modul, så det er lett å legge til flere — og hvis én kilde går glipp av noe, kan
+en annen fange det.
+
+## Passord-sjekk
+
+Et styremedlem kan også teste om et passord er lekket. Det gjøres med
+k-anonymitet: passordet hashes lokalt, og bare de fem første tegnene av hashen
+sendes. Verken Lagvakt eller tjenesten får vite hele passordet.
+
+![Passord-sjekk, trygt](bilder/passord-trygt.png)
+
+![Passord-sjekk, lekket](bilder/passord-lekket.png)
+
+## Slik er det bygd
+
+Lagvakt er en Flask-app med en SQLite-database og en bakgrunns-planlegger
+(APScheduler) som kjører lekkasjesjekkene jevnlig. Brukere logger inn med
+hashede passord, og hver bruker ser kun sine egne klubber.
+
 | Fil | Ansvar |
 |-----|--------|
 | app.py | Webapp, ruter og bakgrunns-planlegger |
@@ -47,27 +62,35 @@ designet:
 | passord_sjekk.py | Passord-sjekk med k-anonymitet |
 | templates/ | Grensesnittet |
 
-## Teknologi
-Python, Flask, SQLite, APScheduler, Werkzeug (passord-hashing)
+## Sikkerhet og personvern
 
-## Oppsett
+Lagvakt er bygget for en sensitiv kontekst — lag med barn — så personvern er en
+del av designet, ikke en ettertanke. Passord lagres hashet og aldri i klartekst,
+lekkasjesjekken avslører aldri selve passordet, og passord-sjekken sender aldri
+passordet videre. Hver bruker ser bare sine egne data, og Lagvakt bruker kun
+seriøse kilder, aldri tjenester som selger passord i klartekst.
 
-python3 -m venv .venv && source .venv/bin/activate
-pip install flask requests python-dotenv apscheduler
-python app.py
+## Kjør lokalt
+
+    python3 -m venv .venv && source .venv/bin/activate
+    pip install flask requests python-dotenv apscheduler
+    python app.py
 
 Åpne http://127.0.0.1:5000 og opprett en konto.
 
-## Begrensninger og videre arbeid
-- Samtykke-flyt: hvert medlem bør bekrefte samtykke før de sjekkes.
-- Ekte varsler: SMS/e-post via en betalt tjeneste (vises som forhåndsvisning i dag).
-- Integrasjon med Spond/StyreWeb for å hente styret automatisk.
-- Produksjonssikkerhet: hemmelig nøkkel i miljøvariabel, HTTPS, CSRF-vern.
+## Videre arbeid
+
+Dette er en fungerende MVP. For å bli en tjeneste klubber kan ta i bruk på
+ordentlig, er de neste stegene en samtykke-flyt der hvert medlem bekrefter at de
+kan sjekkes, ekte varsler på SMS eller e-post, integrasjon mot Spond eller
+StyreWeb for å hente styret automatisk, og vanlig produksjonssikkerhet.
 
 ## Attribusjon
-Lekkasjedata brukes bl.a. fra Have I Been Pwned (haveibeenpwned.com) under deres
-Creative Commons-lisens.
+
+Lekkasjedata brukes blant annet fra Have I Been Pwned (haveibeenpwned.com) under
+deres Creative Commons-lisens.
 
 ## Ansvarsfraskrivelse
-Personlig læringsprosjekt / MVP. Skal kun brukes på e-poster og passord man selv
+
+Personlig læringsprosjekt og MVP. Skal kun brukes på e-poster og passord man selv
 eier eller har fått samtykke til å sjekke.
